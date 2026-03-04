@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 overflow-hidden">
+    <footer className="relative overflow-hidden">
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dowxcmeyy/image/upload/v1760969539/deafult-county-escort_bjiy2c.png')] max-md:bg-[url('https://res.cloudinary.com/dowxcmeyy/image/upload/v1760969787/footer-mobile_fmu8r4.jpg')] bg-cover bg-center">
         <div className="absolute inset-0 bg-black/90"></div>
