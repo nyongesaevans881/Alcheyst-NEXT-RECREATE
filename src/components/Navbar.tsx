@@ -48,7 +48,6 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -56,7 +55,6 @@ export default function Navbar() {
 
   // Load user and token from localStorage
   useEffect(() => {
-    setMounted(true);
     try {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
@@ -162,21 +160,6 @@ export default function Navbar() {
       {link.label}
     </Link>
   );
-
-  if (!mounted) {
-    return (
-      <nav className="border-b border-neutral-800 bg-secondary sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 max-w-7xl flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-text-inverse">
-          <span className="text-primary">
-              <img src="/primary-logo.png" alt="Alchemyst Logo" className="h-10" />
-            </span>
-            Alchemyst
-          </Link>
-        </div>
-      </nav>
-    );
-  }
 
   return (
     <nav className="border-b border-neutral-800 bg-secondary sticky top-0 z-50">
