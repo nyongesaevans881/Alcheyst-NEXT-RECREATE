@@ -5,8 +5,6 @@ import profilesReducer from './features/profiles/profilesSlice';
 import profileDetailsReducer from './features/profiles/profileDetailsSlice';
 import uiReducer from './features/ui/uiSlice';
 
-const isClient = typeof window !== 'undefined';
-
 // Persist configuration for profiles
 const profilesPersistConfig = {
   key: 'profiles',
@@ -33,16 +31,9 @@ const uiPersistConfig = {
 export const makeStore = () => {
   const store = configureStore({
     reducer: {
-      // @ts-expect-error - persistReducer adds _persist to state type, causing type mismatch in conditional
-      profiles: isClient
-        ? persistReducer(profilesPersistConfig, profilesReducer)
-        : profilesReducer,
-      // @ts-expect-error - persistReducer adds _persist to state type, causing type mismatch in conditional
-      profileDetails: isClient
-        ? persistReducer(profileDetailsPersistConfig, profileDetailsReducer)
-        : profileDetailsReducer,
-      // @ts-expect-error - persistReducer adds _persist to state type, causing type mismatch in conditional
-      ui: isClient ? persistReducer(uiPersistConfig, uiReducer) : uiReducer,
+      profiles: persistReducer(profilesPersistConfig, profilesReducer),
+      profileDetails: persistReducer(profileDetailsPersistConfig, profileDetailsReducer),
+      ui: persistReducer(uiPersistConfig, uiReducer),
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
@@ -64,6 +55,6 @@ export type AppDispatch = AppStore['dispatch'];
 
 // Export function to create persistor (called from client-side only)
 export const createPersistor = (appStore: AppStore) => {
-  if (!isClient) return null;
+  if (typeof window === 'undefined') return null;
   return persistStore(appStore);
 };
