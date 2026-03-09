@@ -477,16 +477,6 @@ export default function LocationPage() {
                 description: `Meet ${area || location || county}'s most sought-after independent escorts with premium companionship services.`,
               })}
 
-              {/* Basic Section Divider */}
-              {(profilesByTier.elite.length > 0 ||
-                profilesByTier.premium.length > 0) &&
-                profilesByTier.basic.length > 0 && (
-                  <div className="my-8 border-t border-border pt-8">
-                    <h2 className="text-xl font-bold text-center text-text-muted mb-4">
-                      REGULAR PROFILES
-                    </h2>
-                  </div>
-                )}
 
               {/* Basic Spas */}
               {renderSpaSection({
