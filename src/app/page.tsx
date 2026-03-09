@@ -247,11 +247,7 @@ export default function Home() {
       <div className="relative bg-[url('https://res.cloudinary.com/dowxcmeyy/image/upload/v1760970216/alchemyst-escorts-banner_tvwm7r.png')] max-md:bg-[url('https://res.cloudinary.com/dowxcmeyy/image/upload/v1760969895/alchemyst-escorts_wiitx6.jpg')] bg-cover bg-center py-16 px-4 max-md:py-10">
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-4"
-          >
+          <div className="text-center mb-4">
             <h1 className="text-4xl md:text-5xl font-bold text-text-inverse mb-4 max-md:flex max-md:flex-col">
               Home of
               <span className="bg-[url('/graphic/scratch.png')] bg-cover bg-center bg-no-repeat py-2 px-2">
@@ -263,7 +259,7 @@ export default function Home() {
             <p className="text-lg text-text-inverse/70">
               Listing thousands of independent adult entertainers. Escorts, Masseuse, Spas, OF-Models and much more.
             </p>
-          </motion.div>
+          </div>
 
           <div className="bg-card rounded-2xl p-6 shadow-xl">
             <div className="flex flex-col md:flex-row gap-4">

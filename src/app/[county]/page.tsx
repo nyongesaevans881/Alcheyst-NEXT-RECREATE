@@ -8,6 +8,7 @@ import type { RootState } from '@/lib/store';
 import ProfileCard from '@/components/ProfileCard';
 import SpaCard from '@/components/SpaCard';
 import locationsData from '@/data/counties.json';
+import { generateSeoPath, urlToCounty, urlToLocation, urlToArea } from '@/utils/urlHelpers';
 import { FiArrowLeft } from 'react-icons/fi';
 import { IoStarOutline } from 'react-icons/io5';
 import { MdOutlineLocalFireDepartment } from 'react-icons/md';
@@ -15,36 +16,36 @@ import { LuLeaf, LuSpade, LuSearchCheck } from 'react-icons/lu';
 import { CgGirl } from 'react-icons/cg';
 import { GiSelfLove, GiCurlyMask, GiDualityMask } from 'react-icons/gi';
 
-// Helper to convert URL slug to proper county name
-const urlToCounty = (slug: string): string => {
-  const decoded = decodeURIComponent(slug).toLowerCase();
-  const county = (locationsData as any[]).find(
-    (c) => c.name.toLowerCase() === decoded
-  );
-  return county?.name || slug;
-};
-
-// Helper to convert URL slug to proper location name
-const urlToLocation = (slug: string): string => {
-  const decoded = decodeURIComponent(slug).replace(/-/g, ' ').toLowerCase();
-  return decoded;
-};
-
-// Helper to convert URL slug to proper area name
-const urlToArea = (slug: string): string => {
-  const decoded = decodeURIComponent(slug).replace(/-/g, ' ').toLowerCase();
-  return decoded;
-};
-
 interface Profile {
   _id: string;
+  username?: string;
   userType: string;
-  packageType: string;
+  packageType?: string;
+  serviceType?: string;
+  age?: number;
+  gender?: string;
+  bio?: string;
   profileImage?: { url: string };
+  secondaryImages?: { url: string }[];
+  location?: {
+    county?: string;
+    location?: string;
+    area?: string[];
+  };
+  contact?: {
+    phoneNumber?: string;
+    hasWhatsApp?: boolean;
+  };
+  services?: { name: string }[];
+  currentPackage?: {
+    packageType?: string;
+    status?: string;
+  };
+  verification?: {
+    profileVerified?: boolean;
+  };
   [key: string]: any;
 }
-
-interface Spa extends Profile {}
 
 interface ProfilesByTier {
   elite: Profile[];
@@ -52,19 +53,12 @@ interface ProfilesByTier {
   basic: Profile[];
 }
 
-interface SpasByTier {
-  elite: Spa[];
-  premium: Spa[];
-  basic: Spa[];
-}
-
 interface RenderSectionProps {
   tier: 'elite' | 'premium' | 'basic';
   icon: React.ReactNode;
-  items: Profile[] | Spa[];
+  items: Profile[];
   title: string;
   description: string;
-  isSpas?: boolean;
 }
 
 export default function LocationPage() {
@@ -72,10 +66,17 @@ export default function LocationPage() {
   const params = useParams();
   const dispatch = useAppDispatch();
 
-  const countySlug = params.county as string;
-  const county = urlToCounty(countySlug);
+  // Parse URL params - could be /:county, /:county/:location, /:county/:location/:area
+  const countyParam = params.county as string;
+  const locationParam = (params as any).location as string | undefined;
+  const areaParam = (params as any).area as string | undefined;
 
-  const { filteredProfiles: allProfiles, loading } = useAppSelector(
+  // Decode URL slugs to actual names
+  const county = countyParam ? urlToCounty(countyParam) : null;
+  const location = locationParam ? urlToLocation(locationParam) : null;
+  const area = areaParam ? urlToArea(areaParam) : null;
+
+  const { allProfiles, loading } = useAppSelector(
     (state: RootState) => state.profiles
   );
 
@@ -89,14 +90,12 @@ export default function LocationPage() {
     premium: [],
     basic: [],
   });
-  const [spasByTier, setSpasByTier] = useState<SpasByTier>({
+  const [spasByTier, setSpasByTier] = useState<ProfilesByTier>({
     elite: [],
     premium: [],
     basic: [],
   });
   const [localLoading, setLocalLoading] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
-  const [selectedArea, setSelectedArea] = useState<string | null>(null);
 
   // Fetch profiles on mount
   useEffect(() => {
@@ -106,6 +105,7 @@ export default function LocationPage() {
 
   // Update background image based on county
   useEffect(() => {
+    if (!county) return;
     const countyData = (locationsData as any[]).find(
       (c) => c.name.toLowerCase() === county.toLowerCase()
     );
@@ -115,101 +115,99 @@ export default function LocationPage() {
     );
   }, [county]);
 
-  // Extract locations and areas for this county
-  const extractLocationsAndAreas = () => {
-    const countyData = (locationsData as any[]).find(
-      (c) => c.name.toLowerCase() === county.toLowerCase()
-    );
+  // Filter profiles and extract locations/areas from URL params
+  useEffect(() => {
+    if (!county || allProfiles.length === 0) return;
 
-    if (!countyData) {
-      setLocationsList([]);
-      setAreasList([]);
-      return;
-    }
-
-    // Get unique locations
-    const locs = [...new Set(countyData.sub_counties || [])];
-    setLocationsList(locs);
-
-    // Get areas only if no location selected, or specific location's areas
-    if (!selectedLocation && countyData.popular_areas) {
-      setAreasList(countyData.popular_areas || []);
-    } else if (selectedLocation) {
-      // For simplicity, use popular areas if location selected
-      setAreasList(countyData.popular_areas || []);
-    } else {
-      setAreasList([]);
-    }
-  };
-
-  // Filter and categorize profiles/spas
-  const filterAndCategorizeProfiles = () => {
     setLocalLoading(true);
 
-    let filtered = allProfiles;
-
-    // Filter by county
-    filtered = filtered.filter(
-      (profile) =>
-        profile.location?.county?.toLowerCase() === county.toLowerCase()
-    );
-
-    // Filter by location if selected
-    if (selectedLocation && selectedLocation !== 'all') {
-      filtered = filtered.filter(
-        (profile) =>
-          profile.location?.subCounty?.toLowerCase() ===
-          selectedLocation.toLowerCase()
+    const timer = setTimeout(() => {
+      let filtered = allProfiles.filter(
+        (p: Profile) => p.location?.county?.toLowerCase() === county.toLowerCase()
       );
-    }
 
-    // Filter by area if selected
-    if (selectedArea && selectedArea !== 'all') {
-      filtered = filtered.filter(
-        (profile) =>
-          profile.location?.area?.toLowerCase() === selectedArea.toLowerCase()
-      );
-    }
+      const locations = [
+        ...new Set(
+          filtered
+            .map((p: Profile) => p.location?.location)
+            .filter(Boolean) as string[]
+        ),
+      ].sort();
+      setLocationsList(locations);
 
-    // Separate into profiles and spas, then by tier
-    const newProfiles: ProfilesByTier = { elite: [], premium: [], basic: [] };
-    const newSpas: SpasByTier = { elite: [], premium: [], basic: [] };
+      if (location && location !== 'all') {
+        filtered = filtered.filter(
+          (p: Profile) => p.location?.location?.toLowerCase() === location.toLowerCase()
+        );
 
-    filtered.forEach((profile) => {
-      const tier = (profile.packageType || 'basic').toLowerCase() as
-        | 'elite'
-        | 'premium'
-        | 'basic';
-
-      if (profile.userType === 'spa') {
-        newSpas[tier].push(profile);
+        const areas = [
+          ...new Set(
+            filtered
+              .flatMap((p: Profile) => p.location?.area || [])
+              .filter(Boolean) as string[]
+          ),
+        ].sort();
+        setAreasList(areas);
       } else {
-        newProfiles[tier].push(profile);
+        setAreasList([]);
       }
-    });
 
-    setProfilesByTier(newProfiles);
-    setSpasByTier(newSpas);
-    setLocalLoading(false);
+      if (area && area !== 'all') {
+        filtered = filtered.filter((p: Profile) =>
+          p.location?.area?.some((a) => a?.toLowerCase() === area.toLowerCase())
+        );
+      }
+
+      const newProfiles: ProfilesByTier = { elite: [], premium: [], basic: [] };
+      const newSpas: ProfilesByTier = { elite: [], premium: [], basic: [] };
+
+      filtered.forEach((profile: Profile) => {
+        const activePackage =
+          profile.currentPackage?.status === 'active'
+            ? profile.currentPackage
+            : profile.purchasedPackages?.find((p: { status?: string }) => p.status === 'active');
+        const tier = (activePackage?.packageType || 'basic').toLowerCase() as
+          | 'elite'
+          | 'premium'
+          | 'basic';
+
+        if (profile.userType === 'spa') {
+          newSpas[tier].push(profile);
+        } else {
+          newProfiles[tier].push(profile);
+        }
+      });
+
+      setProfilesByTier(newProfiles);
+      setSpasByTier(newSpas);
+      setLocalLoading(false);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [allProfiles, county, location, area]);
+
+  const handleLocationClick = (loc: string) => {
+    if (loc === 'all') {
+      const path = generateSeoPath({ county: county || undefined });
+      router.push(path);
+    } else {
+      const path = generateSeoPath({ county: county || undefined, location: loc });
+      router.push(path);
+    }
   };
 
-  // Update locations/areas when county changes
-  useEffect(() => {
-    extractLocationsAndAreas();
-  }, [county, selectedLocation]);
-
-  // Filter when profiles load or selections change
-  useEffect(() => {
-    filterAndCategorizeProfiles();
-  }, [allProfiles, county, selectedLocation, selectedArea]);
-
-  const handleLocationClick = (location: string) => {
-    setSelectedLocation(location === selectedLocation ? null : location);
-    setSelectedArea(null);
-  };
-
-  const handleAreaClick = (area: string) => {
-    setSelectedArea(area === selectedArea ? null : area);
+  const handleAreaClick = (areaName: string) => {
+    if (areaName === 'all') {
+      const path = generateSeoPath({ county: county || undefined, location: location || undefined });
+      router.push(path);
+    } else {
+      const path = generateSeoPath({
+        county: county || undefined,
+        location: location || undefined,
+        area: areaName,
+      });
+      router.push(path);
+    }
   };
 
   const renderProfileSection = ({
@@ -221,18 +219,32 @@ export default function LocationPage() {
   }: RenderSectionProps) => {
     if (items.length === 0) return null;
 
+    const bgColor =
+      tier === 'elite'
+        ? 'bg-yellow-50 border-yellow-400'
+        : tier === 'premium'
+          ? 'bg-purple-50 border-purple-400'
+          : 'bg-gray-50 border-gray-400';
+
+    const iconColor =
+      tier === 'elite'
+        ? 'text-yellow-400'
+        : tier === 'premium'
+          ? 'text-purple-400'
+          : 'text-gray-400';
+
     return (
-      <div key={`profiles-${tier}`} className="my-12">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="text-4xl text-primary">{icon}</div>
-          <div>
-            <h2 className="text-2xl font-bold text-text-inverse">{title}</h2>
-            <p className="text-text-muted text-sm">{description}</p>
+      <div key={`profiles-${tier}`} className="mb-12">
+        <div className={`p-6 max-md:p-2 rounded-lg mb-6 border-l-4 ${bgColor}`}>
+          <div className={`flex items-center gap-2 mb-2 ${iconColor}`}>
+            <span>{icon}</span>
+            <h2 className="text-2xl max-md:text-sm font-bold text-foreground">{title}</h2>
           </div>
+          <p className="text-muted-foreground max-md:text-xs">{description}</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {items.map((profile) => (
-            <ProfileCard key={profile._id} profile={profile} />
+            <ProfileCard key={profile._id} profile={profile as any} />
           ))}
         </div>
       </div>
@@ -248,18 +260,32 @@ export default function LocationPage() {
   }: RenderSectionProps) => {
     if (items.length === 0) return null;
 
+    const bgColor =
+      tier === 'elite'
+        ? 'bg-yellow-50 border-yellow-400'
+        : tier === 'premium'
+          ? 'bg-purple-50 border-purple-400'
+          : 'bg-gray-50 border-gray-400';
+
+    const iconColor =
+      tier === 'elite'
+        ? 'text-yellow-400'
+        : tier === 'premium'
+          ? 'text-purple-400'
+          : 'text-gray-400';
+
     return (
-      <div key={`spas-${tier}`} className="my-12">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="text-4xl text-primary">{icon}</div>
-          <div>
-            <h2 className="text-2xl font-bold text-text-inverse">{title}</h2>
-            <p className="text-text-muted text-sm">{description}</p>
+      <div key={`spas-${tier}`} className="mb-12">
+        <div className={`p-6 max-md:p-2 rounded-lg mb-6 border-l-4 ${bgColor}`}>
+          <div className={`flex items-center gap-2 mb-2 ${iconColor}`}>
+            <span>{icon}</span>
+            <h2 className="text-2xl max-md:text-sm font-bold text-foreground">{title}</h2>
           </div>
+          <p className="text-muted-foreground max-md:text-xs">{description}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {items.map((spa) => (
-            <SpaCard key={spa._id} profile={spa} />
+            <SpaCard key={spa._id} profile={spa as any} />
           ))}
         </div>
       </div>
@@ -271,35 +297,32 @@ export default function LocationPage() {
     profilesByTier.premium.length +
     profilesByTier.basic.length;
   const totalSpas =
-    spasByTier.elite.length +
-    spasByTier.premium.length +
-    spasByTier.basic.length;
+    spasByTier.elite.length + spasByTier.premium.length + spasByTier.basic.length;
 
   const getPageTitle = () => {
-    if (selectedArea) {
-      return `${selectedArea} in ${selectedLocation || county}`;
-    }
-    if (selectedLocation) {
-      return `${selectedLocation}`;
-    }
-    return `Escorts & Services in ${county}`;
+    if (area) return `${area} Escorts`;
+    if (location) return `${location} Call Girls`;
+    return `${county} Escorts`;
   };
 
   const getPageSubtitle = () => {
-    const baseText = `Premium adult entertainment services`;
-    if (selectedArea) {
-      return `${baseText} in ${selectedArea}, ${selectedLocation || county}`;
-    }
-    if (selectedLocation) {
-      return `${baseText} in ${selectedLocation}`;
-    }
-    return `${baseText} in ${county}`;
+    if (area) return `Location: ${location}, County: ${county}`;
+    if (location) return `County: ${county}`;
+    return `Browse all locations in ${county} County`;
   };
 
   const showLoading = (loading && allProfiles.length === 0) || localLoading;
   const showNoResults =
     !showLoading && allProfiles.length > 0 && totalProfiles === 0 && totalSpas === 0;
   const showContent = !showLoading && !showNoResults;
+
+  if (!county) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-text-muted">County not found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -331,8 +354,8 @@ export default function LocationPage() {
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {locationsList.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-4">
-              {selectedLocation ? 'Other Locations' : 'Browse by Location'}
+            <h3 className="text-lg font-semibold mb-4 text-foreground">
+              {location ? 'Other Locations' : 'Browse by Location'}
             </h3>
             <div className="flex flex-wrap gap-2">
               {locationsList.map((loc) => (
@@ -340,7 +363,7 @@ export default function LocationPage() {
                   key={loc}
                   onClick={() => handleLocationClick(loc)}
                   className={`px-4 py-1 rounded-full border transition-all text-sm cursor-pointer ${
-                    selectedLocation === loc
+                    location === loc
                       ? 'bg-primary text-white border-primary'
                       : 'bg-white text-foreground border-border hover:bg-gray-50'
                   }`}
@@ -348,7 +371,7 @@ export default function LocationPage() {
                   {loc}
                 </button>
               ))}
-              {selectedLocation && (
+              {location && (
                 <button
                   onClick={() => handleLocationClick('all')}
                   className="px-4 py-1 text-sm rounded-full border border-border bg-white text-foreground hover:bg-gray-50 transition-all cursor-pointer"
@@ -362,24 +385,24 @@ export default function LocationPage() {
 
         {areasList.length > 0 && (
           <div className="mb-0">
-            <h3 className="text-lg font-semibold mb-4">
-              {selectedArea ? 'Other Areas' : 'Browse by Area'}
+            <h3 className="text-lg font-semibold mb-4 text-foreground">
+              {area ? 'Other Areas' : 'Browse by Area'}
             </h3>
             <div className="flex flex-wrap gap-2">
-              {areasList.map((area) => (
+              {areasList.map((areaName, idx) => (
                 <button
-                  key={area}
-                  onClick={() => handleAreaClick(area)}
+                  key={`${areaName}-${idx}`}
+                  onClick={() => handleAreaClick(areaName)}
                   className={`px-4 py-1 rounded-full border transition-all text-sm cursor-pointer ${
-                    selectedArea === area
+                    area === areaName
                       ? 'bg-primary text-white border-primary'
                       : 'bg-white text-foreground border-border hover:bg-gray-50'
                   }`}
                 >
-                  {area}
+                  {areaName}
                 </button>
               ))}
-              {selectedArea && (
+              {area && (
                 <button
                   onClick={() => handleAreaClick('all')}
                   className="px-4 py-1 text-sm rounded-full border border-border bg-white text-foreground hover:bg-gray-50 transition-all"
@@ -424,8 +447,7 @@ export default function LocationPage() {
                 icon: <IoStarOutline size={30} />,
                 items: spasByTier.elite,
                 title: 'VIP LUXURY SPAS & PARLORS',
-                description: `Step into ultimate luxury with ${selectedArea || selectedLocation || county}'s most exclusive adult entertainment venues. These premium spas offer VIP treatment, elite services, and complete discretion.`,
-                isSpas: true,
+                description: `Step into ultimate luxury with ${area || location || county}'s most exclusive adult entertainment venues. These premium spas offer VIP treatment, elite services, and complete discretion.`,
               })}
 
               {/* VIP Escorts */}
@@ -434,7 +456,7 @@ export default function LocationPage() {
                 icon: <MdOutlineLocalFireDepartment size={30} />,
                 items: profilesByTier.elite,
                 title: 'VIP ESCORTS & MODELS',
-                description: `These are the sexiest call girls, escorts, masseuses and OF models in ${selectedArea || selectedLocation || county}. Step into a world of pleasure with verified profiles.`,
+                description: `These are the sexiest call girls, escorts, masseuses and OF models in ${area || location || county}. Step into a world of pleasure with verified profiles.`,
               })}
 
               {/* Premium Spas */}
@@ -443,8 +465,7 @@ export default function LocationPage() {
                 icon: <LuLeaf size={30} />,
                 items: spasByTier.premium,
                 title: 'PREMIUM RELAXATION SPOTS',
-                description: `Discover ${selectedArea || selectedLocation || county}'s finest massage parlors and adult spas with professional services.`,
-                isSpas: true,
+                description: `Discover ${area || location || county}'s finest massage parlors and adult spas with professional services.`,
               })}
 
               {/* Premium Escorts */}
@@ -453,7 +474,7 @@ export default function LocationPage() {
                 icon: <CgGirl size={30} />,
                 items: profilesByTier.premium,
                 title: 'FEATURED INDEPENDENT MODELS',
-                description: `Meet ${selectedArea || selectedLocation || county}'s most sought-after independent escorts with premium companionship services.`,
+                description: `Meet ${area || location || county}'s most sought-after independent escorts with premium companionship services.`,
               })}
 
               {/* Basic Section Divider */}
@@ -461,7 +482,7 @@ export default function LocationPage() {
                 profilesByTier.premium.length > 0) &&
                 profilesByTier.basic.length > 0 && (
                   <div className="my-8 border-t border-border pt-8">
-                    <h2 className="text-xl font-bold text-center text-muted-foreground mb-4">
+                    <h2 className="text-xl font-bold text-center text-text-muted mb-4">
                       REGULAR PROFILES
                     </h2>
                   </div>
@@ -473,8 +494,7 @@ export default function LocationPage() {
                 icon: <LuSpade size={30} />,
                 items: spasByTier.basic,
                 title: 'QUALITY SPAS & MASSAGE CENTERS',
-                description: `Reliable and affordable spa services in ${selectedArea || selectedLocation || county} with verified credentials.`,
-                isSpas: true,
+                description: `Reliable and affordable spa services in ${area || location || county} with verified credentials.`,
               })}
 
               {/* Basic Escorts */}
@@ -483,7 +503,7 @@ export default function LocationPage() {
                 icon: <GiSelfLove size={30} />,
                 items: profilesByTier.basic,
                 title: 'LOCAL INDEPENDENT SERVICE PROVIDERS',
-                description: `Browse through ${selectedArea || selectedLocation || county}'s diverse selection of independent escorts and models.`,
+                description: `Browse through ${area || location || county}'s diverse selection of independent escorts and models.`,
               })}
             </>
           )
@@ -498,7 +518,7 @@ export default function LocationPage() {
                   <h2 className="text-3xl font-bold text-gray-900 mb-6 max-md:text-lg">
                     Find the Best Escorts, Call Girls & Adult Services in{' '}
                     <span className="capitalize">
-                      {selectedLocation || county}
+                      {location || county}
                     </span>
                   </h2>
 
@@ -506,7 +526,7 @@ export default function LocationPage() {
                     Welcome to Alchemyst's exclusive directory of premium adult
                     entertainment in{' '}
                     <strong className="capitalize">
-                      {selectedLocation || county}
+                      {location || county}
                     </strong>
                     . Whether you're looking for <strong>sexy escorts</strong>,{' '}
                     <strong>professional masseuses</strong>,{' '}
@@ -518,13 +538,13 @@ export default function LocationPage() {
                   <h3 className="text-2xl font-semibold text-gray-900 mt-8 mb-4 max-md:text-lg max-md:mt-4">
                     Premium Adult Entertainment in{' '}
                     <span className="capitalize">
-                      {selectedLocation || county}
+                      {location || county}
                     </span>
                   </h3>
 
                   <p className="leading-relaxed mb-6">
                     <span className="capitalize">
-                      {selectedLocation ? `${selectedLocation}, ${county}` : county}
+                      {location ? `${location}, ${county}` : county}
                     </span>{' '}
                     is known for its vibrant nightlife and adult entertainment
                     scene. Our platform connects you with{' '}
@@ -539,7 +559,7 @@ export default function LocationPage() {
                         <GiCurlyMask />
                         What to Expect in{' '}
                         <span className="capitalize">
-                          {selectedLocation || county}
+                          {location || county}
                         </span>
                       </h4>
                       <ul className="space-y-3 text-blue-800">
@@ -613,7 +633,7 @@ export default function LocationPage() {
 
                   <h3 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">
                     How to Connect with{' '}
-                    <span className="capitalize">{selectedLocation || county}</span> Service
+                    <span className="capitalize">{location || county}</span> Service
                     Providers
                   </h3>
 
@@ -626,7 +646,7 @@ export default function LocationPage() {
 
                   <div className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl p-8 text-white my-8 max-md:p-4">
                     <h4 className="text-2xl font-bold mb-4 text-center">
-                      Join {selectedLocation || county}'s Premier Adult Entertainment
+                      Join {location || county}'s Premier Adult Entertainment
                       Community
                     </h4>
                     <p className="text-lg text-center mb-6 opacity-90 max-md:text-sm">
@@ -654,32 +674,32 @@ export default function LocationPage() {
                     <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <LuSearchCheck />
                       Popular Searches in{' '}
-                      <span className="capitalize">{selectedLocation || county}</span>:
+                      <span className="capitalize">{location || county}</span>:
                     </h4>
                     <div className="flex flex-wrap gap-2 text-sm">
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        escorts {selectedLocation || county}
+                        escorts {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        call girls {selectedLocation || county}
+                        call girls {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        massage services {selectedLocation || county}
+                        massage services {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        spas {selectedLocation || county}
+                        spas {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        of-models {selectedLocation || county}
+                        of-models {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        adult entertainment {selectedLocation || county}
+                        adult entertainment {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        independent models {selectedLocation || county}
+                        independent models {location || county}
                       </span>
                       <span className="bg-white px-3 py-1 rounded-full border">
-                        hookup {selectedLocation || county}
+                        hookup {location || county}
                       </span>
                     </div>
                   </div>
