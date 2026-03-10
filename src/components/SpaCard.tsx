@@ -18,7 +18,7 @@ interface Profile {
   bio?: string;
   profileImage?: { url: string };
   secondaryImages?: { url: string }[];
-  location?: { county: string; location: string };
+  location?: { county?: string; location?: string; area?: string };
   contact?: { phoneNumber: string; hasWhatsApp?: boolean };
   services?: { name: string }[];
   currentPackage?: { packageType: string; status: string };
