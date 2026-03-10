@@ -277,31 +277,67 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-secondary border-t border-neutral-800 px-4 py-4"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+            className="fixed inset-0 bg-black z-40 flex flex-col items-center justify-center md:hidden"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col items-center gap-4 w-full px-8">
               {navLinks.map((link) => renderNavLink(link, true))}
-              {!token && (
-                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-neutral-800">
+
+              <div className="w-full border-t border-neutral-700 my-4" />
+
+              {token && user ? (
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <div className="flex flex-col items-center gap-2 text-center">
+                    {user?.profileImage?.url ? (
+                      <img src={user.profileImage.url} className="h-20 w-20 rounded-full object-cover" alt="Profile" />
+                    ) : (
+                      <UserIcon className="h-20 w-20 text-primary" />
+                    )}
+                    <div className="text-white text-xl font-bold">{user.username || 'User'}</div>
+                    <div className={`text-sm ${user.isActive ? 'text-green-400' : 'text-red-400'}`}>
+                      {user.isActive ? 'Active Profile' : 'Inactive Profile'}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => { router.push('/dashboard'); setMobileMenuOpen(false); }}
+                    className="text-2xl font-bold text-text-inverse hover:text-primary"
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={() => { router.push('/dashboard#settings'); setMobileMenuOpen(false); }}
+                    className="text-2xl font-bold text-text-inverse hover:text-primary"
+                  >
+                    Settings
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="text-2xl font-bold text-red-400 hover:text-red-300"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-4 w-full max-w-xs">
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 text-text-inverse border border-primary rounded-lg font-medium text-center hover:bg-primary/10 transition-all"
+                    className="w-full px-8 py-4 text-text-inverse border-2 border-primary rounded-lg font-bold text-xl hover:bg-primary/10 transition-all text-center"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 bg-primary text-text-inverse rounded-lg font-medium text-center hover:bg-primary-hover transition-all"
+                    className="w-full px-8 py-4 bg-primary text-text-inverse rounded-lg font-bold text-xl hover:bg-primary-hover transition-all text-center"
                   >
                     Sign Up
                   </Link>

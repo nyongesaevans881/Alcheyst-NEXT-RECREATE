@@ -6,13 +6,13 @@ import { motion } from "framer-motion"
 import {
   FiArrowLeft,
   FiPhone,
+  FiMessageCircle,
   FiMapPin,
   FiCheckCircle,
   FiCopy,
   FiCheck,
   FiUser,
   FiHeart,
-  FiEye,
   FiCalendar,
   FiGlobe,
 } from "react-icons/fi"
@@ -262,26 +262,24 @@ export default function ProfileDetailsPage({ params, searchParams }: PageProps) 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-neutral-900 py-4 px-4 sticky top-0 z-40">
+      <div className="bg-neutral-900 py-4 px-4 z-40">
         <div className="container mx-auto max-w-7xl flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors max-md:mr-2 cursor-pointer"
           >
-            <FiArrowLeft size={20} />
-            <span className="max-md:hidden">Back</span>
+            <FiArrowLeft size={20} className={`border rounded-full ml-4 h-8 w-8 p-1 ${profile.userType === "masseuse" ? "text-blue-500 bg-blue-500/10 border-blue-500" : profile.userType === "of-model" ? "text-fuchsia-500 bg-fuchsia-500/10 border-fuchsia-500" : "text-primary bg-primary/10 border-primary"}`} />
+            <span className="hidden sm:inline">Back</span>
           </button>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-white/60">
-              <FiEye size={16} />
-              <span className="text-sm">{profile.analytics?.views || 0} views</span>
-            </div>
-            <div className="flex items-center gap-2 text-white/60">
-              <FiHeart size={16} />
-              <span className="text-sm">{profile.analytics?.interactions || 0} interactions</span>
-            </div>
-          </div>
+          <h1 className="text-white font-medium text-lg truncate max-w-xs sm:max-w-md flex gap-2 max-md:gap-0 capitalize max-md:flex max-md:flex-col">
+            <span className={`font-bold ${profile.userType === "masseuse" ? "text-blue-500" : profile.userType === "of-model" ? "text-fuchsia-500" : "text-primary"}`}>Alchemyst {profile.userType}s </span>
+            <span className="max-md:hidden capitalize">&gt;&gt;&nbsp;</span>
+            <span className="flex items-center">
+              {!isSpa && <span>Hook up with</span>}&nbsp;
+              {profile.username}
+            </span>
+          </h1>
+          <div className="w-10" />
         </div>
       </div>
 
@@ -755,6 +753,16 @@ export default function ProfileDetailsPage({ params, searchParams }: PageProps) 
           </motion.div>
         )}
 
+        {/* SEO Content Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-16 py-8 px-4 max-md:px-2 max-md:mt-10"
+        >
+          <SEOContent profile={profile} />
+        </motion.div>
+
         {/* Sign Up CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -792,6 +800,237 @@ export default function ProfileDetailsPage({ params, searchParams }: PageProps) 
             </p>
           </div>
         </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/* ─── SEO Content Component ─── */
+
+function SEOContent({ profile }: { profile: any }) {
+  const { username, userType, location, age, services, bio, verification, currentPackage, providesEroticServices } = profile
+  const county = location?.county || "Nairobi"
+  const area = location?.area?.[0] || location?.location || "the area"
+  const locationString = `${area}, ${county}`
+
+  const serviceTypes: Record<string, { title: string; keywords: string[]; description: string; synonyms: string[] }> = {
+    escort: {
+      title: "Escort",
+      keywords: ["escorts", "call girls", "companionship", "dating", "hookups", "sexy girls", "female escorts"],
+      description: "premium escort services",
+      synonyms: ["companion", "call girl", "escort service"],
+    },
+    masseuse: {
+      title: "Masseuse",
+      keywords: providesEroticServices
+        ? ["massage", "bodywork", "relaxation", "therapeutic massage", "erotic massage", "sensual massage"]
+        : ["massage", "bodywork", "relaxation", "therapeutic massage", "deep tissue", "sports massage"],
+      description: providesEroticServices
+        ? "professional erotic and sensual massage services"
+        : "professional therapeutic and wellness massage services",
+      synonyms: providesEroticServices
+        ? ["massage therapist", "bodywork specialist", "sensual masseuse"]
+        : ["massage therapist", "wellness specialist", "spa masseuse"],
+    },
+    "of-model": {
+      title: "OnlyFans Model",
+      keywords: ["OnlyFans", "content creation", "premium content", "online modeling", "adult content"],
+      description: "exclusive OnlyFans content",
+      synonyms: ["content creator", "online model"],
+    },
+    spa: {
+      title: "Spa",
+      keywords: ["spa services", "massage parlor", "adult entertainment", "relaxation center", "wellness spa"],
+      description: "luxurious spa and wellness experiences",
+      synonyms: ["massage parlor", "wellness center"],
+    },
+  }
+
+  const serviceInfo = serviceTypes[userType] || {
+    title: "Entertainment",
+    keywords: ["adult services", "entertainment"],
+    description: "premium adult entertainment services",
+    synonyms: ["service provider"],
+  }
+
+  const serviceList = services?.length ? services.map((s: any) => s.name).join(", ") : "customized services"
+
+  const verificationBadges: string[] = []
+  if (verification?.profileVerified) verificationBadges.push("Verified Profile")
+  if (verification?.backgroundCheck) verificationBadges.push("Background Verified")
+  if (currentPackage?.status === "active") verificationBadges.push("Premium Member")
+
+  const accentColor =
+    userType === "masseuse" ? "text-blue-600" : userType === "of-model" ? "text-fuchsia-600" : "text-primary"
+  const dotColor =
+    userType === "masseuse" ? "bg-blue-500" : userType === "of-model" ? "bg-fuchsia-500" : "bg-primary"
+  const borderColor =
+    userType === "masseuse" ? "border-blue-500" : userType === "of-model" ? "border-fuchsia-500" : "border-primary"
+
+  const serviceParagraph =
+    userType === "masseuse" ? (
+      providesEroticServices ? (
+        <p className="text-lg text-gray-700">
+          <strong>{username}</strong> provides both <strong>therapeutic and sensual massage</strong> experiences,
+          combining relaxation with intimacy in a professional and safe environment. Enjoy a personalized experience
+          in {locationString}, designed to meet your specific preferences while maintaining complete confidentiality.
+        </p>
+      ) : (
+        <p className="text-lg text-gray-700">
+          <strong>{username}</strong> specializes in <strong>professional, non-erotic massage therapy</strong> focused
+          on wellness, relaxation, and physical rejuvenation. Perfect for clients seeking deep tissue, Swedish, or
+          sports massage sessions in {locationString}.
+        </p>
+      )
+    ) : (
+      <p className="text-lg text-gray-700">
+        Offering services in <strong>{serviceList}</strong>, {username} provides customized experiences tailored to
+        your specific desires. Whether you&apos;re looking for companionship, relaxation, or exclusive entertainment,
+        you&apos;ll find satisfaction with this professional {serviceInfo.title.toLowerCase()}.
+      </p>
+    )
+
+  return (
+    <div className="space-y-6 text-gray-700 leading-relaxed text-left prose prose-lg max-w-none">
+      <h1 className="text-2xl font-bold text-gray-900 mb-4 capitalize">
+        {username} – {serviceInfo.title} in {locationString} | Alchemyst {serviceInfo.title}s
+      </h1>
+
+      <p className="text-lg">
+        Meet <strong>{username}</strong>, a dedicated {serviceInfo.title.toLowerCase()} based in{" "}
+        <strong>{locationString}</strong>.{" "}
+        {age ? `At ${age} years old,` : "This professional"}{" "}
+        {userType === "masseuse" && !providesEroticServices
+          ? "offers therapeutic wellness sessions"
+          : `provides ${serviceInfo.description}`}{" "}
+        for clients seeking high-quality, confidential, and professional service.
+      </p>
+
+      {bio && <p>{bio}</p>}
+
+      {serviceParagraph}
+
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4 capitalize">
+        Best {serviceInfo.title} Services in {county} – {area} Area
+      </h2>
+
+      <p>
+        Searching for <strong>{serviceInfo.keywords[0]} in {area}</strong> or{" "}
+        <strong>{serviceInfo.synonyms[0]} in {county}</strong>?{" "}
+        {username} stands out among local {serviceInfo.title.toLowerCase()}s for professionalism, reliability, and
+        client satisfaction. {area} is known for quality wellness and entertainment services — and {username} delivers
+        the best experience possible.
+      </p>
+
+      <h3 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Why Choose {username}?</h3>
+      <ul className="space-y-3 ml-4">
+        {verification?.profileVerified && (
+          <li className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+            <span>Verified profile with complete background check</span>
+          </li>
+        )}
+        {currentPackage?.status === "active" && (
+          <li className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+            <span>Premium {userType} offering top-rated services</span>
+          </li>
+        )}
+        <li className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+          <span>Professional and discreet services in {area}</span>
+        </li>
+        <li className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+          <span>Flexible scheduling for your convenience</span>
+        </li>
+        {services?.length > 0 && (
+          <li className="flex items-center gap-2">
+            <span className={`min-w-2 min-h-2 rounded-full ${dotColor}`} />
+            <span>Specialized services including {serviceList}</span>
+          </li>
+        )}
+        <li className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+          <span>Competitive rates with transparent pricing</span>
+        </li>
+      </ul>
+
+      {/* CTA Card */}
+      <div className={`bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border-l-4 mt-6 ${borderColor}`}>
+        <h4 className="font-semibold text-gray-900 mb-3 text-lg">
+          Ready to Experience Premium {serviceInfo.title} Services?
+        </h4>
+        <p className="text-gray-800 mb-4">
+          Contact <strong>{username}</strong> today for the best {serviceInfo.description} in{" "}
+          <strong>{locationString}</strong>. Easy booking, professional service, and complete discretion guaranteed.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <strong className={accentColor}>Quick Contact Info:</strong>
+            <div className="mt-2 space-y-3">
+              {profile.contact?.phoneNumber && (
+                <div className="flex items-center gap-1">
+                  <FiPhone className="w-5 h-5 inline" />
+                  <span>Phone: {profile.contact.phoneNumber}</span>
+                </div>
+              )}
+              {profile.contact?.hasWhatsApp && (
+                <div className="flex items-center gap-1">
+                  <FiMessageCircle className="w-5 h-5 inline" />
+                  <span>WhatsApp: Available for quick booking</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <FiMapPin className="w-5 h-5 inline" />
+                <span>Location: {locationString}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FiCheckCircle className="w-5 h-5 inline" />
+                <span>Service Type: {userType.charAt(0).toUpperCase() + userType.slice(1)}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <strong className={accentColor}>Service Details:</strong>
+            <div className="mt-2 space-y-3">
+              {age && (
+                <div className="flex items-center gap-1">
+                  <FiCalendar className="w-5 h-5 inline" />
+                  <span>Age: {age} years</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <FiCalendar className="w-5 h-5 inline" />
+                <span>Availability: Flexible scheduling</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FiMapPin className="w-5 h-5 inline" />
+                <span>Service Area: {locationString} and surrounding areas</span>
+              </div>
+              {verificationBadges.length > 0 && (
+                <div className="flex items-center gap-1">
+                  <FiCheckCircle className="w-5 h-5 inline" />
+                  <span>Status: {verificationBadges.join(", ")}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Popular Searches */}
+      <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+        <p className="text-sm text-gray-600">
+          <strong>Popular Searches:</strong>{" "}
+          {serviceInfo.keywords
+            .slice(0, 3)
+            .map((kw) => `${kw} in ${area}, ${kw} in ${county}`)
+            .join(", ")}{" "}
+          | best {serviceInfo.title.toLowerCase()}s {locationString} |{" "}
+          {providesEroticServices ? "sensual massage" : "wellness massage"} {area}
+        </p>
       </div>
     </div>
   )
