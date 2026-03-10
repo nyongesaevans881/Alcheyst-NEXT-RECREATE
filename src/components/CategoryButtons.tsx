@@ -57,8 +57,15 @@ export default function CategoryButtons({
       // For "All", stay on home page and filter
       onCategorySelect(category.id);
     } else {
-      // For specific categories, navigate to dedicated page
-      router.push(category.path);
+      // For specific categories, navigate to dedicated page with userType parameter
+      const userTypeMap: Record<string, string> = {
+        escort: 'escort',
+        masseuse: 'masseuse',
+        'of-model': 'of-model',
+        spa: 'spa',
+      };
+      const userType = userTypeMap[category.id] || category.id;
+      router.push(`${category.path}?userType=${userType}`);
     }
   };
 

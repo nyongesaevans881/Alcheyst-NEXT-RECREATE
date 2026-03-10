@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { BsWhatsapp } from 'react-icons/bs';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { generateProfilePath } from '@/utils/urlHelpers';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -83,7 +84,7 @@ export default function SpaCard({ profile }: SpaCardProps) {
 
   const handleViewProfile = () => {
     trackInteraction('profile_view');
-    router.push(`/profile/${profile.userType}/${profile._id}`);
+    router.push(generateProfilePath(profile));
   };
 
   const handleCopyPhone = async (e: React.MouseEvent) => {

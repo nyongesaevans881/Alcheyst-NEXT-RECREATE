@@ -7,23 +7,10 @@ import { FiPhone, FiCopy, FiCheckCircle } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { BiLocationPlus } from 'react-icons/bi';
 import { BsWhatsapp } from 'react-icons/bs';
+import { generateProfilePath } from '@/utils/urlHelpers';
+import type { Profile } from '@/lib/features/profiles/profilesSlice';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-
-interface Profile {
-  _id: string;
-  username: string;
-  age: number;
-  userType: string;
-  gender: string;
-  serviceType: string;
-  bio?: string;
-  profileImage?: { url: string };
-  location?: { county: string; location: string };
-  contact?: { phoneNumber: string; hasWhatsApp?: boolean };
-  currentPackage?: { packageType: string; status: string };
-  verification?: { profileVerified: boolean };
-}
 
 interface ProfileCardProps {
   profile: Profile;
@@ -94,7 +81,7 @@ export default function ProfileCard({ profile, imgHght }: ProfileCardProps) {
 
   const handleViewProfile = () => {
     trackInteraction('profile_view');
-    router.push(`/profile/${profile.userType}/${profile._id}`);
+    router.push(generateProfilePath(profile));
   };
 
   const trackInteraction = async (type: string) => {

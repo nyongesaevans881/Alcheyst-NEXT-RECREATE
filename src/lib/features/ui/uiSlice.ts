@@ -8,7 +8,7 @@ export interface Filters {
   servesWho?: 'all' | string;
   sexualOrientation?: 'all' | string;
   ethnicity?: 'all' | string;
-  ageRange?: { min: number; max: number };
+  ageRange?: { min: number; max: number | null };
   serviceType?: 'all' | string;
   specificService?: 'all' | string;
   county?: string;

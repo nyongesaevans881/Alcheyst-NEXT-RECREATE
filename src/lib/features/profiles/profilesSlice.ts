@@ -3,17 +3,20 @@ import axios from 'axios';
 
 export interface Profile {
   _id: string;
-  id: string;
-  name: string;
+  id?: string;
+  username: string;
+  name?: string;
+  age: number;
   userType: 'escort' | 'masseuse' | 'of-model' | 'spa';
+  gender: string;
+  serviceType: string;
   phone?: string;
   location?: {
     county?: string;
+    location?: string;
     area?: string;
   };
   county?: string;
-  age?: number;
-  gender?: string;
   bodyType?: string;
   breastSize?: string;
   image?: string;
@@ -21,13 +24,15 @@ export interface Profile {
   bio?: string;
   rating?: number;
   verified?: boolean;
+  verification?: { profileVerified: boolean };
   services?: Array<{ name: string }>;
-  serviceType?: string;
   rates?: Record<string, number>;
   isActive?: boolean;
   servesWho?: string;
   sexualOrientation?: string;
   ethnicity?: string;
+  contact?: { phoneNumber: string; hasWhatsApp?: boolean };
+  currentPackage?: { packageType: string; status: string };
 }
 
 interface ProfilesState {
