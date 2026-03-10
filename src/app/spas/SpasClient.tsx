@@ -1,33 +1,24 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { FiSearch, FiMapPin, FiRefreshCw, FiFilter, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-  import { fetchAllProfiles, applyFilters, type Profile } from '@/lib/features/profiles/profilesSlice';
+import { fetchAllProfiles, applyFilters, type Profile } from '@/lib/features/profiles/profilesSlice';
 import { setFilters, setSelectedCounty } from '@/lib/features/ui/uiSlice';
 import type { RootState } from '@/lib/store';
 
-import ProfileCard from '@/components/ProfileCard';
+import SpaCard from '@/components/SpaCard';
 import FilterBar from '@/components/FilterBar';
 import locationsData from '@/data/counties.json';
 
-export default function MasseusesPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-background" />}>
-      <MasseusesPageContent />
-    </Suspense>
-  );
-}
-
-function MasseusesPageContent() {
-  const router = useRouter();
+export default function SpasClient() {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
 
-  const { allProfiles, filteredProfiles, loading, error, lastFetchTime, totalCount } = useAppSelector(
+  const { allProfiles, filteredSpas, loading, error, lastFetchTime } = useAppSelector(
     (state: RootState) => state.profiles
   );
   const { filters, selectedCounty } = useAppSelector((state: RootState) => state.ui);
@@ -37,51 +28,12 @@ function MasseusesPageContent() {
     type: string;
     value: string;
     county?: string;
-    service?: string;
-    bodyType?: string;
   }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Shuffle array utility
-  const shuffleArray = useCallback((array: Profile[]): Profile[] => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }, []);
-
-  // Check for active filters
-  const hasActiveFilters = useMemo(() => {
-    return (
-      (filters.userType && filters.userType !== 'all') ||
-      (filters.gender && filters.gender !== 'all') ||
-      (filters.bodyType && filters.bodyType !== 'all') ||
-      (filters.breastSize && filters.breastSize !== 'all') ||
-      (filters.serviceType && filters.serviceType !== 'all') ||
-      (filters.sexualOrientation && filters.sexualOrientation !== 'all') ||
-      (filters.ethnicity && filters.ethnicity !== 'all') ||
-      (filters.servesWho && filters.servesWho !== 'all') ||
-      (filters.specificService && filters.specificService !== 'all') ||
-      (filters.ageRange?.max !== null)
-    );
-  }, [filters]);
-
-  // Display profiles - shuffled if no filters active
-  const displayProfiles = useMemo(() => {
-    if (hasActiveFilters) {
-      return filteredProfiles;
-    } else {
-      return shuffleArray(filteredProfiles);
-    }
-  }, [filteredProfiles, hasActiveFilters, shuffleArray]);
-
-  // Set userType to masseuse on mount and fetch profiles - runs once
   useEffect(() => {
-    // Only set filters and fetch on initial mount
-    const userType = searchParams.get('userType') || 'masseuse';
+    const userType = searchParams.get('userType') || 'spa';
     dispatch(
       setFilters({
         userType: userType as any,
@@ -96,12 +48,9 @@ function MasseusesPageContent() {
         ageRange: { min: 18, max: null },
       })
     );
-
-    // Fetch profiles on mount
     dispatch(fetchAllProfiles());
-  }, []); // Empty dependency array - run once on mount
+  }, []);
 
-  // Apply filters whenever filters/county/data change
   useEffect(() => {
     if (allProfiles.length > 0) {
       dispatch(
@@ -113,7 +62,6 @@ function MasseusesPageContent() {
     }
   }, [dispatch, filters, selectedCounty, allProfiles]);
 
-  // Enhanced search suggestions with better matching
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
 
@@ -122,22 +70,19 @@ function MasseusesPageContent() {
       setShowSuggestions(false);
       return;
     }
+
     const normalizedQuery = value.toLowerCase().trim();
     const matches: Array<{
       type: string;
       value: string;
       county?: string;
-      service?: string;
-      bodyType?: string;
     }> = [];
 
     if (selectedCounty === 'all') {
-      // Search counties when "All Counties" is selected
       (locationsData as any[]).forEach((county) => {
         const countyName = county.name.toLowerCase();
         const subCounties = county.sub_counties.map((sc: string) => sc.toLowerCase());
 
-        // Exact match for county name
         if (countyName === normalizedQuery) {
           matches.push({
             type: 'county',
@@ -146,7 +91,6 @@ function MasseusesPageContent() {
           });
         }
 
-        // Partial match for county name
         if (countyName.includes(normalizedQuery) && !matches.some((m) => m.value === county.name)) {
           matches.push({
             type: 'county',
@@ -155,7 +99,6 @@ function MasseusesPageContent() {
           });
         }
 
-        // Search in sub-counties (locations) with county context
         subCounties.forEach((subCounty: string, index: number) => {
           if (subCounty.includes(normalizedQuery)) {
             matches.push({
@@ -167,15 +110,12 @@ function MasseusesPageContent() {
         });
       });
     } else {
-      // Search within selected county
       const county = (locationsData as any[]).find((c) => c.name === selectedCounty);
       if (!county) return;
 
-      // Search locations (sub_counties)
       county.sub_counties.forEach((location: string) => {
         const normalizedLocation = location.toLowerCase();
 
-        // Exact match
         if (normalizedLocation === normalizedQuery) {
           matches.push({
             type: 'location',
@@ -184,7 +124,6 @@ function MasseusesPageContent() {
           });
         }
 
-        // Partial match
         if (normalizedLocation.includes(normalizedQuery)) {
           matches.push({
             type: 'location',
@@ -193,7 +132,6 @@ function MasseusesPageContent() {
           });
         }
 
-        // Word boundary matching for better results
         const words = normalizedLocation.split(' ');
         if (words.some((word) => word.startsWith(normalizedQuery))) {
           if (!matches.some((m) => m.value === location)) {
@@ -206,7 +144,6 @@ function MasseusesPageContent() {
         }
       });
 
-      // Search popular areas if they exist
       if ((county as any).popular_areas) {
         (county as any).popular_areas.forEach((area: string) => {
           const normalizedArea = area.toLowerCase();
@@ -220,52 +157,6 @@ function MasseusesPageContent() {
         });
       }
     }
-
-    // Search services
-    const servicesList = [
-      'Massage',
-      'Dinner Dates',
-      'Travel Companion',
-      'GFE',
-      'PSE',
-      'Couples',
-      'Sleepovers',
-      'Threesomes',
-      'Role Play',
-      'Lesbian Shows',
-      'Anal',
-      'BDSM',
-      'BJ',
-      'Raw BJ',
-      'Rimming',
-      'Raw Sex',
-      'Golden Shower',
-      'Sex Toys',
-    ];
-
-    const serviceMatches = servicesList.filter((service) =>
-      service.toLowerCase().includes(normalizedQuery)
-    );
-
-    serviceMatches.forEach((service) => {
-      matches.push({
-        type: 'service',
-        value: service,
-        service: service,
-      });
-    });
-
-    // Search body types
-    const bodyTypesList = ['Petite', 'Average', 'Curvy', 'Thick', 'BBW', 'Muscular'];
-    const bodyTypeMatches = bodyTypesList.filter((type) => type.toLowerCase().includes(normalizedQuery));
-
-    bodyTypeMatches.forEach((type) => {
-      matches.push({
-        type: 'bodyType',
-        value: type,
-        bodyType: type,
-      });
-    });
 
     setSuggestions(matches.slice(0, 8));
     setShowSuggestions(true);
@@ -281,20 +172,6 @@ function MasseusesPageContent() {
       dispatch(setSelectedCounty(suggestion.county!));
     } else if (suggestion.type === 'area') {
       dispatch(setSelectedCounty(suggestion.county!));
-    } else if (suggestion.type === 'service') {
-      dispatch(
-        setFilters({
-          ...filters,
-          specificService: suggestion.service!,
-        })
-      );
-    } else if (suggestion.type === 'bodyType') {
-      dispatch(
-        setFilters({
-          ...filters,
-          bodyType: suggestion.bodyType!,
-        })
-      );
     }
   };
 
@@ -343,7 +220,6 @@ function MasseusesPageContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
       <div className="relative bg-[url('https://res.cloudinary.com/dowxcmeyy/image/upload/v1760970216/alchemyst-escorts-banner_tvwm7r.png')] max-md:bg-[url('https://res.cloudinary.com/dowxcmeyy/image/upload/v1760969895/alchemyst-escorts_wiitx6.jpg')] bg-cover bg-center py-10 px-4 max-md:py-10">
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative container mx-auto max-w-6xl">
@@ -356,7 +232,7 @@ function MasseusesPageContent() {
               Alchemyst
               <span className="bg-[url('/graphic/scratch.png')] bg-cover bg-center bg-no-repeat py-2 px-2">
                 {' '}
-                masseuses{' '}
+                spas{' '}
               </span>
             </h1>
           </motion.div>
@@ -383,7 +259,7 @@ function MasseusesPageContent() {
                       <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                       <input
                         type="text"
-                        placeholder="Search masseuses by location, services, body type..."
+                        placeholder="Search spas by location..."
                         value={searchQuery}
                         onChange={(e) => handleSearchChange(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
@@ -391,7 +267,6 @@ function MasseusesPageContent() {
                       />
                     </div>
 
-                    {/* Search Suggestions */}
                     {showSuggestions && suggestions.length > 0 && (
                       <div className="absolute top-full left-0 right-0 bg-card border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto mt-1">
                         {suggestions.map((suggestion, index) => (
@@ -403,8 +278,6 @@ function MasseusesPageContent() {
                             {suggestion.type === 'county' && <FiMapPin className="text-blue-500" />}
                             {suggestion.type === 'location' && <FiMapPin className="text-green-500" />}
                             {suggestion.type === 'area' && <FiMapPin className="text-purple-500" />}
-                            {suggestion.type === 'service' && <FiSearch className="text-orange-500" />}
-                            {suggestion.type === 'bodyType' && <FiSearch className="text-pink-500" />}
                             <div>
                               <div className="font-medium text-foreground">{suggestion.value}</div>
                               <div className="text-sm text-muted-foreground capitalize">{suggestion.type}</div>
@@ -421,7 +294,6 @@ function MasseusesPageContent() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto max-w-7xl px-4 py-8">
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -435,7 +307,6 @@ function MasseusesPageContent() {
           </div>
         )}
 
-        {/* Filters Section - Collapsible on Mobile */}
         <div className="mb-8">
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -451,11 +322,10 @@ function MasseusesPageContent() {
           </div>
         </div>
 
-        {/* Results Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-foreground mb-1">
-              Available Masseuses
+              Available Spas
               {selectedCounty !== 'all' && (
                 <span className="text-lg text-muted-foreground font-normal ml-2">
                   in {selectedCounty}
@@ -463,7 +333,7 @@ function MasseusesPageContent() {
               )}
             </h2>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>{displayProfiles.length} masseuses found</span>
+              <span>{filteredSpas.length} spas found</span>
               {lastFetchTime && (
                 <>
                   <span>•</span>
@@ -483,26 +353,25 @@ function MasseusesPageContent() {
           </div>
         </div>
 
-        {/* Profiles Grid */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {[...Array(20)].map((_, i) => (
               <div key={i} className="aspect-[3/4] bg-muted animate-pulse rounded-lg" />
             ))}
           </div>
-        ) : displayProfiles.length === 0 ? (
+        ) : filteredSpas.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-muted-foreground text-lg">
               {allProfiles.length === 0
-                ? 'No masseuses available. Check back later!'
-                : 'No masseuses found. Try adjusting your filters.'}
+                ? 'No spas available. Check back later!'
+                : 'No spas found. Try adjusting your filters.'}
             </p>
-            {allProfiles.length > 0 && displayProfiles.length === 0 && (
+            {allProfiles.length > 0 && filteredSpas.length === 0 && (
               <button
                 onClick={() => {
                   dispatch(
                     setFilters({
-                      userType: 'masseuse',
+                      userType: 'spa',
                       gender: 'all',
                       bodyType: 'all',
                       breastSize: 'all',
@@ -523,8 +392,8 @@ function MasseusesPageContent() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 max-md:gap-2">
-            {displayProfiles.map((profile: Profile) => (
-              <ProfileCard key={profile._id} profile={profile} />
+            {filteredSpas.map((profile: Profile) => (
+              <SpaCard key={profile._id} profile={profile} />
             ))}
           </div>
         )}

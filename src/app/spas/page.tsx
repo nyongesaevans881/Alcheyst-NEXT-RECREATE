@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FiSearch, FiMapPin, FiRefreshCw, FiFilter, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { motion } from 'framer-motion';
@@ -15,6 +15,14 @@ import FilterBar from '@/components/FilterBar';
 import locationsData from '@/data/counties.json';
 
 export default function SpasPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <SpasPageContent />
+    </Suspense>
+  );
+}
+
+function SpasPageContent() {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
 

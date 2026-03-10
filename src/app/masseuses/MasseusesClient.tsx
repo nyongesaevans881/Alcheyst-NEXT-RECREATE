@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FiSearch, FiMapPin, FiRefreshCw, FiFilter, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-  import { fetchAllProfiles, applyFilters, type Profile } from '@/lib/features/profiles/profilesSlice';
+import { fetchAllProfiles, applyFilters, type Profile } from '@/lib/features/profiles/profilesSlice';
 import { setFilters, setSelectedCounty } from '@/lib/features/ui/uiSlice';
 import type { RootState } from '@/lib/store';
 
@@ -14,15 +14,7 @@ import ProfileCard from '@/components/ProfileCard';
 import FilterBar from '@/components/FilterBar';
 import locationsData from '@/data/counties.json';
 
-export default function MasseusesPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-background" />}>
-      <MasseusesPageContent />
-    </Suspense>
-  );
-}
-
-function MasseusesPageContent() {
+export default function MasseusesClient() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();

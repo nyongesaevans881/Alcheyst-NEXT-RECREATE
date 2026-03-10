@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FiSearch, FiMapPin, FiRefreshCw, FiFilter, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { motion } from 'framer-motion';
@@ -15,6 +15,14 @@ import FilterBar from '@/components/FilterBar';
 import locationsData from '@/data/counties.json';
 
 export default function EscortsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <EscortsPageContent />
+    </Suspense>
+  );
+}
+
+function EscortsPageContent() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
