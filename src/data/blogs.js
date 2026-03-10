@@ -5,7 +5,7 @@ export const BLOG_CATEGORIES = [
     "Sex Toys",
     "Sex Ed",
     "Escorts",
-    "Industry News"
+    "Trending News"
 ];
 
 export const BLOG_LAYOUTS = {
@@ -13,7 +13,8 @@ export const BLOG_LAYOUTS = {
     TOP_TEN: 'top_ten',
     SPA_REVIEW: 'spa_review',
     PROFILE_SPOTLIGHT: 'profile_spotlight',
-    MIXED_CONTENT: 'mixed_content'
+    MIXED_CONTENT: 'mixed_content',
+    TRENDING_NEWS: 'trending_news'
 };
 
 export const blogs = [
@@ -190,11 +191,11 @@ If you're curious about dipping your toes in, like I did, check out Alchemyst. I
     },
 
 
-      {
+    {
         id: 'unlocking-ecstasy-essential-escort-services-in-kenya-you-must-experience',
         title: 'Unlocking Ecstasy: Essential Escort Services in Kenya You Must Experience',
         excerpt: 'A tantalizing array of services offered by professional escorts in Kenya, designed to fulfill your deepest desires with discretion, passion, and unparalleled satisfaction...',
-        intro:  "Whether you're a local looking to unwind or a traveler craving adventure, platforms like Alchemyst.co.ke connect you with verified professionals who prioritize safety, consent, and explosive pleasure. From sensual massages to wild role plays, we'll explore 18 must-try services with explicit breakdowns, so you know exactly what to expect when you book. Remember, communication is key—discuss boundaries upfront for sessions that leave you breathless and begging for more. SPOILER ALERT! LIST GET'S HOTTER THE MORE YOU SCROLL",
+        intro: "Whether you're a local looking to unwind or a traveler craving adventure, platforms like Alchemyst.co.ke connect you with verified professionals who prioritize safety, consent, and explosive pleasure. From sensual massages to wild role plays, we'll explore 18 must-try services with explicit breakdowns, so you know exactly what to expect when you book. Remember, communication is key—discuss boundaries upfront for sessions that leave you breathless and begging for more. SPOILER ALERT! LIST GET'S HOTTER THE MORE YOU SCROLL",
         category: 'Escorts',
         layout: BLOG_LAYOUTS.TOP_TEN,
         coverImage: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1761132234/unlocking-ecstasy-essential-escort-services-in-kenya-you-must-experience_1_lj9ae8.jpg',
@@ -364,7 +365,116 @@ If you're curious about dipping your toes in, like I did, check out Alchemyst. I
                     'Clean thoroughly between uses for hygiene.',
                 ]
             },
-       ]
+        ]
+    },
+
+    {
+        id: 'marion-naipei-scandal-leaked-videos-and-the-dark-side-of-fame',
+        title: 'Marion Naipei Scandal: Leaked Videos and the Viral Club Drama',
+        excerpt: 'The Marion Naipei leaked video scandal has shocked Kenya, sparking debates about privacy, consent, and the perils of kenyan clubs.....',
+        category: 'Trending News',
+        layout: BLOG_LAYOUTS.TRENDING_NEWS,
+        coverImage: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773159786/Marion-Naipei_vixwo2.jpg',
+        author: 'Alchemy',
+        publishDate: '2025-01-20',
+        readTime: '6 min read',
+        featured: true,
+        tags: ['trending', 'marion-naipei', 'trending-marion-naipei', 'trending-marion-naipei-videos', 'marion-naipei-leaked-videos', 'marion-naipei'],
+        sections: [
+            {
+                type: 'subheading',
+                content: 'What happened?'
+            },
+            {
+                type: 'text',
+                content: 'The Marion Naipei scandal has been one of the biggest viral stories trending on the internet, drawing massive attention online and sparking debates about consent, privacy, and online sharing of explicit content. Marion Naipei, a 22-23-year-old university student and single mother from Nairobi, gained widespread notice in January 2026 after a video surfaced showing her in a heavily intoxicated state at a Nairobi club. The footage, which appears explicit and includes indecent exposure, was allegedly recorded and shared without her consent by James Opande, a US-based Kenyan man (described in reports as a medic) with whom she had been in a relationship for about a year. Marion claimed Opande had promised to take her abroad, but the situation deteriorated, leading to the leak.'
+            },
+            {
+                type: 'image',
+                src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773160454/Marion-Naipei-trending-video_l83oau.jpg',
+                alt: 'Marion Naipei Trending Video',
+                caption: 'Marion Naipei Trending Explicit Video'
+            },
+            {
+                type: 'text',
+                content: 'She reported the incident to Buruburu Police Station, accompanied by Nairobi County Chief Officer Geoffrey Mosiria, who initially supported her publicly and emphasized that no woman deserves such treatment. The government issued warnings against sharing the non-consensual video, citing violations under the Computer Misuse and Cybercrime Act, the Constitution, and the Data Protection Act. Investigations were launched, with two suspects reportedly arrested, though Opande remains at large. Lawyer Silas Akiro noted on TV47 that "Marion Naipei has the upper hand in this case because her human rights, including her dignity, were violated when James Opande shared the video from his gadget, failing to maintain her privacy." Some reports suggest she could pursue a civil claim for significant compensation, potentially up to KSh 50 million.'
+            },
+            {
+                type: 'subheading',
+                content: 'Internet Reaction'
+            },
+            {
+                type: 'text',
+                content: 'Public reactions have been intense and divided. On social media platforms like Instagram and Facebook, comments ranged from sympathy —'
+            },
+            {
+                type: 'quote',
+                content: 'I feel that guy who recorded has zero respect for himself and women as well, a married man asking for threesome and to make it worse record someone without their consent.',
+                author: 'x.com',
+                platform: 'Twitter/X'
+            },
+            {
+                type: 'text',
+                content: '- to criticism, with others arguing she was aware and participated willingly. One user stated:'
+            },
+            {
+                type: 'quote',
+                content: 'Dem ni Malaya mm nashangaa mbona mnatetea saana as if nyinyi ndio mlimwambia asivae chupi.',
+                author: 'x.com',
+                platform: 'Twitter/X'
+            },
+            {
+                type: 'subheading',
+                content: 'Fresh Start: Marion Naipei gets saved !'
+            },
+            {
+                type: 'text',
+                content: 'Following the initial fallout, Marion sought a fresh start by turning to the church. She joined Pastor Victor Kanyari’s Salvation Healing Ministry, where she publicly declared she had accepted salvation. During a service, she shared that prayers had changed her life, and Kanyari welcomed her, gifting her KSh 50,000 to start a business and offering further support. She became actively involved, including roles like reading scriptures and assisting in the ministry.'
+            },
+            {
+                type: 'image',
+                src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773161785/marion-naipei-pastor-kanyari_qigwgm.jpg',
+                alt: 'Marion Naipei gets saved',
+                caption: ''
+            },
+            {
+                type: 'subheading',
+                content: 'New Leaked Videos: More Drama?'
+            },
+            {
+                type: 'text',
+                content: 'Dear Reader, the story evolved further. More explicit videos resurfaced, leading to public distancing. Mosiria posted a cryptic message saying he had "washed his hands like Pontius Pilate,"'
+            },
+            {
+                type: 'text',
+                content: 'While Kanyari shared on Facebook:'
+            },
+            {
+                type: 'quote',
+                content: 'Paka ya msituni ni ya msituni... rudi msituni nimechoka" (A wild cat belongs to the wild... go back to the wild, I am tired).',
+                author: 'Pastor Victor Kanyari',
+                platform: 'Facebook'
+            },
+            {
+                type: 'image',
+                src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773163952/marion-naipei-leaked-explicit-videos_nrfp0m.jpg',
+                alt: 'New Leaked Videos: More Drama?',
+                caption: ''
+            },
+
+            {
+                type: 'subheading',
+                content: 'Story Updates'
+            },
+            {
+                type: 'text',
+                content: 'Turned out Kanyari was not talking about Marion and his relationship with her was unchanged. The two have been seen together on several occassions, including several ocassions where Marion is seen riding along him in his car and working in Kanyari\'s Church. Recent online rants from Marion claim "Kanyari ndiye analipa bills zangu hadi school fees," fueling more speculation and buzz.'
+            },
+            {
+                type: 'text',
+                content: "As always if you're looking for more details, the leaked videos or ongoing updates on the Marion Naipei leaked video scandal, James Opande case, club incident, or related explicit content, check out our Telegram channel— we've got the latest there."
+            },
+        ]
     },
 
 ];

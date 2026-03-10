@@ -192,6 +192,67 @@ export function MixedContentLayout({ blog }: { blog: any }) {
   return <article className="max-w-4xl mx-auto">{blog.content?.map(renderContentBlock)}</article>;
 }
 
+export function TrendingNewsLayout({ blog }: { blog: any }) {
+  return (
+    <article className="max-w-4xl mx-auto">
+      {blog.sections?.map((section: any, index: number) => {
+        switch (section.type) {
+          case 'text':
+            return (
+              <p key={index} className="text-gray-700 leading-relaxed mb-6 text-lg">
+                {section.content}
+              </p>
+            );
+
+          case 'image':
+            return (
+              <figure key={index} className="my-8">
+                <img
+                  src={section.src}
+                  alt={section.alt || ''}
+                  className="w-full max-w-md mx-auto h-[500px] object-cover rounded-lg shadow-md"
+                />
+                {section.caption && (
+                  <figcaption className="text-center text-sm text-gray-500 mt-2 italic">
+                    {section.caption}
+                  </figcaption>
+                )}
+              </figure>
+            );
+
+          case 'quote':
+            return (
+              <blockquote
+                key={index}
+                className="my-8 border-l-4 border-primary bg-primary/10 rounded-r-lg px-6 py-5"
+              >
+                <p className="text-gray-800 italic text-lg leading-relaxed mb-3">
+                  &ldquo;{section.content}&rdquo;
+                </p>
+                <footer className="text-sm">
+                  <span className="font-semibold text-primary">{section.author}</span>
+                  {section.platform && (
+                    <span className="text-gray-500"> — {section.platform}</span>
+                  )}
+                </footer>
+              </blockquote>
+            );
+
+          case 'subheading':
+            return (
+              <h3 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-4">
+                {section.content}
+              </h3>
+            );
+
+          default:
+            return null;
+        }
+      })}
+    </article>
+  );
+}
+
 export function BlogLayout({ blog }: { blog: any }) {
   const layouts: Record<string, React.ComponentType<{ blog: any }>> = {
     [BLOG_LAYOUTS.CONFESSION]: ConfessionLayout,
@@ -199,6 +260,7 @@ export function BlogLayout({ blog }: { blog: any }) {
     [BLOG_LAYOUTS.SPA_REVIEW]: SpaReviewLayout,
     [BLOG_LAYOUTS.PROFILE_SPOTLIGHT]: ProfileSpotlightLayout,
     [BLOG_LAYOUTS.MIXED_CONTENT]: MixedContentLayout,
+    [BLOG_LAYOUTS.TRENDING_NEWS]: TrendingNewsLayout,
   };
 
   const LayoutComponent = layouts[blog.layout] || ConfessionLayout;
