@@ -29,7 +29,7 @@ export default function TelegramModal() {
   };
 
   const handleJoin = () => {
-    window.open('https://t.me/alchemyst_ke', '_blank', 'noopener,noreferrer');
+    window.open('https://t.me/alchemyst_lt', '_blank', 'noopener,noreferrer');
     close();
   };
 
