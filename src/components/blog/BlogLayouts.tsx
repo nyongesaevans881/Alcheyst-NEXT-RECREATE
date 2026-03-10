@@ -204,14 +204,24 @@ export function TrendingNewsLayout({ blog }: { blog: any }) {
               </p>
             );
 
-          case 'image':
+          case 'image': {
+            const images = section.images || [{ src: section.src, alt: section.alt }];
+            const count = images.length;
+            const gridCols =
+              count === 1 ? '' : count === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3';
+
             return (
               <figure key={index} className="my-8">
-                <img
-                  src={section.src}
-                  alt={section.alt || ''}
-                  className="w-full max-w-md mx-auto h-[500px] object-cover rounded-lg shadow-md"
-                />
+                <div className={`grid grid-cols-1 ${gridCols} gap-4`}>
+                  {images.map((img: any, i: number) => (
+                    <img
+                      key={i}
+                      src={img.src}
+                      alt={img.alt || ''}
+                      className={`w-full ${count === 1 ? 'max-w-md mx-auto' : ''} h-[500px] object-cover rounded-lg shadow-md`}
+                    />
+                  ))}
+                </div>
                 {section.caption && (
                   <figcaption className="text-center text-sm text-gray-500 mt-2 italic">
                     {section.caption}
@@ -219,6 +229,7 @@ export function TrendingNewsLayout({ blog }: { blog: any }) {
                 )}
               </figure>
             );
+          }
 
           case 'quote':
             return (

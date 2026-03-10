@@ -369,7 +369,7 @@ If you're curious about dipping your toes in, like I did, check out Alchemyst. I
     },
 
     {
-        id: 'marion-naipei-scandal-leaked-videos-and-the-dark-side-of-fame',
+        id: 'marion-naipei-scandal-leaked-videos-and-the-viral-club-drama',
         title: 'Marion Naipei Scandal: Leaked Videos and the Viral Club Drama',
         excerpt: 'The Marion Naipei leaked video scandal has shocked Kenya, sparking debates about privacy, consent, and the perils of kenyan clubs.....',
         category: 'Trending News',
@@ -401,7 +401,7 @@ If you're curious about dipping your toes in, like I did, check out Alchemyst. I
             },
             {
                 type: 'subheading',
-                content: 'Internet Reaction'
+                content: 'Internet\'s Reaction'
             },
             {
                 type: 'text',
@@ -477,4 +477,101 @@ If you're curious about dipping your toes in, like I did, check out Alchemyst. I
         ]
     },
 
+    {
+        id: 'the-viral-russian-guy-scandal',
+        title: 'The Viral Russian Guy Scandal',
+        excerpt: 'Russian Man Is Going Viral For Sleeping With Multiple Kenyan And Ghanian Women He Meets On The First Day - No Talking Stage, No Introductions, Just Encounters, Including With Some Seemingly Married Women...',
+        category: 'Trending News',
+        layout: BLOG_LAYOUTS.TRENDING_NEWS,
+        coverImage: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773165620/trending-russian-guy_1_fjoo5k.png',
+        author: 'Alchemy',
+        publishDate: '2025-02-20',
+        readTime: '8 min read',
+        featured: true,
+        tags: ['Russian guy Kenya', 
+            'Yaytseslav scandal', 
+            'viral Russian man Kenya', 
+            'secret filming women Kenya', 
+            'leaked videos Russian guy', 
+            'consent scandal Kenya',
+            'Nairobi pick-up artist',
+            'viral videos Telegram Kenya',
+        ],
+        sections: [
+            {
+                type: 'subheading',
+                content: 'Who is the "Russian Guy"?'
+            },
+            {
+                type: 'text',
+                content: 'A man identifying himself as a Russian national, named Yaytseslav Trahov (or variations like Vladislav Liukov/Yayteslav), went viral after sharing videos of his encounters with women in Nairobi, Kenya, and Accra, Ghana. He positioned himself as a "pick-up artist" or content creator, approaching women in public places like malls, supermarkets, and streets. His typical approach was simple: a quick compliment like "Hello, what\'s your name? You look beautiful, can you come with me?" followed by an invitation to his rented apartment, Airbnb, or hotel room—often within hours or the same day.'
+            },
+            {
+                type: 'image',
+                images: [
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773167002/trending-russian-guy-2_y8trap.jpg', alt: 'Trending Rusian Guy' },
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773165620/trending-russian-guy_1_fjoo5k.png', alt: 'Trending Rusian Guy' },
+                ],
+                alt: 'Trending Rusian Guy',
+                caption: 'Trending Rusian Guy'
+            },
+            {
+                type: 'text',
+                content: 'The clips started circulating heavily on TikTok, Instagram, YouTube, X (formerly Twitter), and Telegram around Valentine\'s Day 2026. Short versions showed the initial pick-ups and women agreeing to visit him, while longer, more intimate footage (allegedly explicit and sexual) was reportedly sold or shared privately via Telegram channels. Key allegations include him secretly recording the encounters without consent—using hidden cameras like smart glasses (Meta Glasses)—and then posting or monetizing them online. This led to widespread outrage, with many calling it exploitation of vulnerable women for views and profit.'
+            },
+                        {
+                type: 'image',
+                images: [
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773167463/trending-russian-guy-video-3_hzstem.jpg', alt: 'Trending Rusian Guy Videos 1' },
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773167460/trending-russian-guy-video-2_txbh3n.jpg', alt: 'Trending Rusian Guy Videos 2' },
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773167459/trending-russian-guy-video-1_wtz26w.jpg', alt: 'Trending Rusian Guy Videos 2' },
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773167458/trending-russian-guy-video-5_xhxjj6.jpg', alt: 'Trending Rusian Guy Videos 2' },
+                    { src: 'https://res.cloudinary.com/dowxcmeyy/image/upload/v1773167458/trending-russian-guy-video-4_pbj23m.jpg', alt: 'Trending Rusian Guy Videos 2' },
+                ],
+                alt: 'Trending Rusian Guy',
+                caption: 'Trending Rusian Guy'
+            },
+            {
+                type: 'subheading',
+                content: 'Internet\'s Reaction'
+            },
+            {
+                type: 'text',
+                content: 'Reactions online have been sharply divided and intense. Some users expressed shock at how quickly women agreed to go with a stranger, with comments like "This small-budget approach reportedly proved far more effective than lavish spending" or memes about "the end of dowry." Others focused on consent and exploitation, with posts highlighting vulnerability:'
+            },
+            {
+                type: 'quote',
+                content: 'We are dealing with a narcissist... he just want to objectify women.',
+                author: 'x.com',
+                platform: 'Twitter/X'
+            },
+            {
+                type: 'text',
+                content: 'Sympathy emerged for affected women, alongside criticism of both the man and societal factors. Threads on X compiled videos, with captions like:'
+            },
+            {
+                type: 'quote',
+                content: 'The Russian guy in Kenya videos are wild',
+                author: 'x.com',
+                platform: 'Twitter/X'
+            },
+            {
+                type: 'text',
+                content: 'gaining massive traction. Broader discussions touched on race, power dynamics, economic pressures, and "passport bro" trends.'
+            },
+            {
+                type: 'subheading',
+                content: 'Ongoing Drama and Broader Impact'
+            },
+            {
+                type: 'text',
+                content: 'More videos surfaced over weeks, including one where a woman confronted him after noticing filming, and others showing continued activity in Kenya (e.g., Kangemi or Westlands areas). Some reports mentioned similar behavior by other Russians (like Alex Ananasik) in Kenya, amplifying the story. The saga has fueled national conversations about foreign exploitation, women\'s safety in digital/dating spaces, and moral decay—echoing themes from other viral cases.'
+            },
+
+            {
+                type: 'text',
+                content: 'If you\'re looking for more details, including the leaked videos, full clips from the Russian guy scandal in Kenya, updates on Yaytseslav Trahov, or related explicit content from Nairobi encounters, join our Telegram channel—we\'ve got the latest there. As always, our site features a consent modal and NSFW warnings, so you control what you see. Stay safe out there!'
+            },
+        ]
+    },
 ];
