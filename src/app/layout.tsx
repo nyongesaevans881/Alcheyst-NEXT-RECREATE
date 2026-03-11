@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alchemyst - Premium Service Platform",
-  description: "Find premium services and professionals in Kenya",
+  title: "Alchemyst - Kenya's Number One Erotic Services Directory",
+  description: "Discover Kenya's premier directory for erotic services. Hot Sexy Escorts, Erotic Massauses and Spa's and OF-Models. Browse hundreds of profile and find exactly what you are looking for!",
 };
 
 export default function RootLayout({
