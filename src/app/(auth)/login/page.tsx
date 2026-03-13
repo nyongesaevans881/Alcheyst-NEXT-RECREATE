@@ -7,7 +7,7 @@ import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi"
 import toast from "react-hot-toast"
 import { saveAuthData, isAuthenticated } from "@/utils/auth"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alchemyst-node-tjam.onrender.com'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface FormData {
   email: string

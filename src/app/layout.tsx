@@ -5,6 +5,7 @@ import StoreProvider from "./StoreProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ClientOverlays from "@/components/ClientOverlays";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,12 @@ export default function RootLayout({
       >
         <StoreProvider>
           <div className="flex flex-col min-h-screen bg-slate-900">
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4500,
+              }}
+            />
             <Navbar />
             <main className="flex-1">
               {children}

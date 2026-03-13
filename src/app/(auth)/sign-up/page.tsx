@@ -8,7 +8,7 @@ import toast from "react-hot-toast"
 import { saveAuthData } from "@/utils/auth"
 import { motion } from "framer-motion"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alchemyst-node-tjam.onrender.com'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface FormData {
   username: string
@@ -25,8 +25,13 @@ interface FormErrors {
 
 interface ApiResponse {
   success: boolean
+  error?: string
   message?: string
   token?: string
+  conflicts?: {
+    email?: boolean
+    username?: boolean
+  }
   data?: {
     id: string
     email: string
@@ -113,6 +118,10 @@ function SignUpContent() {
     setLoading(true)
 
     try {
+      if (!API_URL) {
+        throw new Error("Missing NEXT_PUBLIC_API_URL. Please set your frontend API URL.")
+      }
+
       const payload = {
         username: formData.username,
         email: formData.email,
@@ -127,7 +136,17 @@ function SignUpContent() {
       })
 
       const data: ApiResponse = await response.json()
-      if (!response.ok) throw new Error(data.message || "Registration failed")
+
+      if (!response.ok) {
+        if (response.status === 409 && data.conflicts) {
+          const conflictErrors: FormErrors = {}
+          if (data.conflicts.email) conflictErrors.email = "This email is already registered"
+          if (data.conflicts.username) conflictErrors.username = "This username is already taken"
+          setErrors((prev) => ({ ...prev, ...conflictErrors }))
+        }
+
+        throw new Error(data.message || "Registration failed")
+      }
 
       if (data.success && data.token && data.data) {
         saveAuthData(data.token, data.data, false)
