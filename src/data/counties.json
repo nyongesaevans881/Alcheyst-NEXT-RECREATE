@@ -215,6 +215,28 @@
             "lari"
         ]
     },
+        {
+        "name": "Limuru",
+        "capital": "Limuru",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425930/limuru_u0ed8j.jpg",
+        "code": 22,
+        "sub_counties": [
+            "Gatundu north",
+            "Gatundu south",
+            "Githunguri",
+            "Kiambu Town",
+            "Thindigua",
+            "Juja",
+            "Kabete",
+            "Kiambaa",
+            "Kiambu",
+            "Kikuyu",
+            "Limuru",
+            "Ruiru",
+            "Thika town",
+            "lari"
+        ]
+    },
     {
         "name": "Kilifi",
         "capital": "Kilifi",
