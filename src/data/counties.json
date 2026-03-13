@@ -60,7 +60,7 @@
     {
         "name": "Eldoret",
         "capital": "Eldoret",
-        "coverImage": "",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425723/kiambu_b0tfin.jpg",
         "code": 27,
         "sub_counties": [
             "Eldoret Town",
@@ -196,7 +196,7 @@
     {
         "name": "Kiambu",
         "capital": "Kiambu",
-        "coverImage": "",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425723/kiambu_b0tfin.jpg",
         "code": 22,
         "sub_counties": [
             "Gatundu north",
@@ -253,7 +253,7 @@
     {
         "name": "Kisumu",
         "capital": "Kisumu",
-        "coverImage": "",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425195/kisumu_qddkir.jpg",
         "code": 42,
         "sub_counties": [
             "Ahero",
@@ -312,7 +312,7 @@
     {
         "name": "Laikipia",
         "capital": "Rumuruti",
-        "coverImage": "",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425764/laikipia_lxhw0b.jpg",
         "code": 31,
         "sub_counties": [
             "Nyahururu",
@@ -559,7 +559,7 @@
     {
         "name": "Nakuru",
         "capital": "Nakuru",
-        "coverImage": "",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425298/nakuru_pysl9m.jpg",
         "code": 32,
         "sub_counties": [
             "Bahati",
@@ -606,7 +606,7 @@
     {
         "name": "Narok",
         "capital": "Narok",
-        "coverImage": "",
+        "coverImage": "https://res.cloudinary.com/dowxcmeyy/image/upload/v1773425791/narok_eyvtyu.jpg",
         "code": 33,
         "sub_counties": [
             "Narok Town",
